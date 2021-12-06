@@ -27,7 +27,7 @@ fn process_file(sourceFile: &str, destFile: &str) -> Result<(), Box<dyn Error>> 
     let  reader = BufReader::new(file);
     let mut csv =  csv::Reader::from_reader(reader);
     let mut writer = csv::Writer::from_path(destFile)?;
-    let re = Regex::new("\\[[^\\]]*\\]").unwrap();
+    let re = Regex::new("\\[[^]]*\\]").unwrap();
     let mut headers = csv.headers().unwrap().clone();
     headers.push_field("city");
     headers.push_field("country");
