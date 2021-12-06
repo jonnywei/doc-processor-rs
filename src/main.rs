@@ -10,7 +10,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     println!("work dir: {:?}", dir);
     let work_dir = Path::new(&dir);
     let output_dir = &work_dir.join("new_dir");
-    fs::create_dir_all(output_dir);
+    fs::create_dir_all(output_dir)?;
     let dir = fs::read_dir(work_dir).unwrap();
     let files = dir
         .filter(|file| {
@@ -43,7 +43,7 @@ fn process_file(source_file: &PathBuf, dest_file: &PathBuf) -> Result<(), Box<dy
     headers.push_field("city");
     headers.push_field("country");
     headers.push_field("university");
-    writer.write_record(&headers);
+    writer.write_record(&headers)?;
     for line in csv.records() {
         let record = line?;
         println!("{:?}", record);
@@ -54,7 +54,7 @@ fn process_file(source_file: &PathBuf, dest_file: &PathBuf) -> Result<(), Box<dy
             let result = re.replace_all(cell, "");
             println!("{:?}", result);
             let addr_list = result.split(";");
-            let mut addr_list = addr_list.collect::<Vec<&str>>();
+            let addr_list = addr_list.collect::<Vec<&str>>();
             let addr = addr_list.iter().next().ok_or("add error")?;
             {
                 println!("========{:?}=======", &addr);
@@ -63,7 +63,7 @@ fn process_file(source_file: &PathBuf, dest_file: &PathBuf) -> Result<(), Box<dy
                     break;
                 }
                 let addr = addr.split(",");
-                let mut addr = addr.collect::<Vec<&str>>();
+                let addr = addr.collect::<Vec<&str>>();
                 let mut iter = addr.iter().rev();
                 let county = (&mut iter).next().ok_or("county not found")?;
                 let city = (&mut iter).next().ok_or("city not found")?;
@@ -72,7 +72,7 @@ fn process_file(source_file: &PathBuf, dest_file: &PathBuf) -> Result<(), Box<dy
                 new_record.push_field(city.trim());
                 new_record.push_field(county.trim());
                 new_record.push_field(univ.trim());
-                writer.write_record(&new_record);
+                writer.write_record(&new_record)?;
             }
         }
     }
